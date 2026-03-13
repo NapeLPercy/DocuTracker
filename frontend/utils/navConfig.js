@@ -13,16 +13,24 @@ export const MANAGER_NAV = [
     section: "People",
     items: [
       { label: "Add users",   path: "manager/team/add",       icon: "Users" },
-      { label: "View/Edit/Remove users",   path: "manager/team/users",  icon: "Users" },
+      { label: "View/Edit/Remove users",   path: "manager/users",  icon: "Users" },
     ],
   },
     {
     section: "Tasks",
     items: [
       { label: "Add Tasks",   path: "manager/task/add",       icon: "Users" },
-      { label: "View/Edit/Remove tasks",   path: "manager/team/users",  icon: "Users" },
+      { label: "View/Edit/Remove tasks",   path: "manager/tasks",  icon: "Users" },
     ],
   },
+
+    {
+    section: "Comments",
+    items: [
+      { label: "View reports",   path: "manager/reports",       icon: "Users" },
+    ],
+  },
+
   {
     section: "Insights",
     items: [
@@ -46,11 +54,18 @@ export const WORKER_NAV = [
       { label: "My Documents",      path: "/worker/documents",   icon: "FileText" },
     ],
   },
+   {
+    section: "Comments",
+    items: [
+      { label: "View reports",   path: "personell/reports",       icon: "Users" },
+    ],
+  },
+
   {
     section: "Actions",
     items: [
       { label: "Submit / Upload",   path: "/worker/submit",      icon: "Upload" },
-      { label: "Tasks",             path: "/worker/tasks",       icon: "ClipboardList" },
+      { label: "Tasks",             path: "personell/tasks",       icon: "ClipboardList" },
     ],
   },
 ];

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-//
+//create base url
 const api = axios.create({
   baseURL: import.meta.env.VITE_REACT_BASE_API,
 
@@ -9,9 +9,11 @@ const api = axios.create({
   },
 });
 
+//intercept req to add auth header
 api.interceptors.request.use(
   (config) => {
-    const rawUser = sessionStorage.getItem("user");
+    
+    const rawUser = sessionStorage.getItem("docutracker_user");
     const user = rawUser ? JSON.parse(rawUser) : null;
 
     if (user?.token) {
@@ -23,4 +25,32 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default api;
+//handle api exception
+//handle api errors
+function handleApiError(error, fallbackMessage) {
+  if (error.response) {
+    return {
+      success: false,
+      message: error.response.data?.message || fallbackMessage,
+      status: error.response.status,
+      data: null,
+    };
+  }
+
+  if (error.request) {
+    return {
+      success: false,
+      message: "No response from server. Please check your connection.",
+      status: null,
+      data: null,
+    };
+  }
+
+  return {
+    success: false,
+    message: error.message || fallbackMessage,
+    status: null,
+    data: null,
+  };
+}
+export {api,handleApiError};

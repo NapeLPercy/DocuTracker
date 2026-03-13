@@ -12,12 +12,12 @@ module.exports = {
         (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
-        }
+        },
       );
     });
   },
 
-    // Find account by email
+  // Find account by email
   findByEmail: (email) => {
     return new Promise((resolve, reject) => {
       db.query(
@@ -26,7 +26,7 @@ module.exports = {
         (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
-        }
+        },
       );
     });
   },
@@ -35,13 +35,13 @@ module.exports = {
   createUser: (persal_number, surname_initials, role) => {
     return new Promise((resolve, reject) => {
       db.query(
-        `INSERT INTO user (persal_number, surname_initials, role, is_active)
+        `INSERT INTO user (persal_number, fullName, role, is_active)
          VALUES (?, ?, ?, 0)`,
         [persal_number, surname_initials, role],
         (err, result) => {
           if (err) return reject(err);
           resolve(result.insertId);
-        }
+        },
       );
     });
   },
@@ -56,7 +56,7 @@ module.exports = {
         (err, result) => {
           if (err) return reject(err);
           resolve(result);
-        }
+        },
       );
     });
   },
@@ -73,7 +73,7 @@ module.exports = {
         (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
-        }
+        },
       );
     });
   },
@@ -82,7 +82,7 @@ module.exports = {
   getWorkers: (role, isActive) => {
     return new Promise((resolve, reject) => {
       const sql = `
-        SELECT persal_number, surname_initials 
+        SELECT persal_number, fullName
         FROM user 
         WHERE role = ? AND is_active = ?
       `;
@@ -94,22 +94,38 @@ module.exports = {
     });
   },
 
+  // GET ALL USERS (except managers)
 
-   // GET ALL USERS (except managers)
-   
   getAllUsers: () => {
     return new Promise((resolve, reject) => {
+      //hhjh
       const sql = `
-        SELECT persal_number AS persal, surname_initials, role, is_active
-        FROM user
-        WHERE role NOT LIKE "MANAGER"
-        ORDER BY surname_initials
+        SELECT u.persal_number AS persal,u.fullName,u.role,u.is_active, a.email
+        FROM user u
+        INNER JOIN account a ON u.persal_number = a.persal_number
+        WHERE u.role NOT LIKE 'MANAGER'
+        ORDER BY u.fullName
       `;
 
       db.query(sql, (err, results) => {
         if (err) return reject(err);
         resolve(results);
       });
+    });
+  },
+
+
+  //update role
+  updateRole: (persal, role) => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `UPDATE user SET role = ? WHERE persal_number = ?`,
+        [role,persal],
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        },
+      );
     });
   },
 
@@ -136,32 +152,41 @@ module.exports = {
               (err) => {
                 if (err) return db.rollback(() => reject(err));
 
-                // 3. Delete account
+                // 3. Delete record
                 db.query(
-                  `DELETE FROM account WHERE persal_number = ?`,
+                  `DELETE FROM record WHERE persal_number = ?`,
                   [persal],
                   (err) => {
                     if (err) return db.rollback(() => reject(err));
 
-                    // 4. Delete user
+                    // 4. Delete account
                     db.query(
-                      `DELETE FROM user WHERE persal_number = ?`,
+                      `DELETE FROM account WHERE persal_number = ?`,
                       [persal],
-                      (err, result) => {
+                      (err) => {
                         if (err) return db.rollback(() => reject(err));
 
-                        db.commit((err) => {
-                          if (err) return db.rollback(() => reject(err));
+                        // 5. Delete user
+                        db.query(
+                          `DELETE FROM user WHERE persal_number = ?`,
+                          [persal],
+                          (err, result) => {
+                            if (err) return db.rollback(() => reject(err));
 
-                          resolve(result);
-                        });
-                      }
+                            db.commit((err) => {
+                              if (err) return db.rollback(() => reject(err));
+
+                              resolve(result);
+                            });
+                          },
+                        );
+                      },
                     );
-                  }
+                  },
                 );
-              }
+              },
             );
-          }
+          },
         );
       });
     });

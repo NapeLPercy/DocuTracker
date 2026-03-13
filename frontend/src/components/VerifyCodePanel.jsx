@@ -20,7 +20,7 @@ const ShieldIcon = () => (
 );
 
 export default function VerifyCodePanel  ({ email, onBack, onVerify }){
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -54,7 +54,7 @@ export default function VerifyCodePanel  ({ email, onBack, onVerify }){
   };
   const handleVerify = () => {
     const full = code.join("");
-    if (full.length < 6) { setError("Enter all 6 digits"); return; }
+    if (full.length < 5) { setError("Enter all 6 digits"); return; }
     setLoading(true);
     setTimeout(() => { setLoading(false); onVerify(full); }, 1500);
   };

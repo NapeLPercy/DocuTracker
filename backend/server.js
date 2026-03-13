@@ -25,10 +25,10 @@ app.use(express.static("public")); // MUST be before any routes
 
 // app routes
 app.use("/api/auth", authRoutes);
-app.use("/api/tasks", taskRoutes);
+app.use("/api/task", taskRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/metrics", metricRoutes);
-app.use("/api/reports", reportRoutes);
+app.use("/api/metric", metricRoutes);
+app.use("/api/report", reportRoutes);
 app.use("/api/automate", autoRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 

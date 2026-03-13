@@ -8,47 +8,50 @@ const PasswordManager = require("../utils/PasswordManager");
 // Create user + account
 exports.addUser = async (req, res) => {
   try {
-    const { persal_number, surname, role, email } = req.body;
+    const { persal, fullName, role, email } = req.body;
 
-    if (!persal_number || !surname || !role || !email) {
+    if (!persal || !fullName || !role || !email) {
       return res
         .status(400)
-        .json({ success: false, error: "All fields are required" });
+        .json({ success: false, message: "All fields are required" });
     }
 
     // Check if user already exists
-    const existingUserByPersal = await User.findByPersal(persal_number);
+    const existingUserByPersal = await User.findByPersal(persal);
 
     if (existingUserByPersal) {
       return res.status(400).json({
         success: false,
-        error: "User already exists with this Persal Number",
+        message: "User already exists with this Persal Number",
       });
     }
+    console.log(existingUserByPersal);
 
     // Check if user already exists
     const existingUserByMail = await User.findByEmail(email);
+    console.log(existingUserByMail);
 
     if (existingUserByMail) {
       return res.status(400).json({
         success: false,
-        error: "User already exists with this Email",
+        message: "User already exists with this Email",
       });
     }
 
     // Create user in the "user" table
-    const userId = await User.createUser(persal_number, surname, role);
+    const userId = await User.createUser(persal, fullName, role);
 
     // Generate a password
     const pm = new PasswordManager();
-    let generatedPassword = pm.generatePassword(email, persal_number);
+    let generatedPassword = pm.generatePassword(email, persal);
 
+    //GET RID OF THIS LINE, THEN SEND PASSWORD EMAIL TO THE LINK
     generatedPassword = "Rosina^*20";
     // Hash password
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
     // Create account entry
-    await User.createAccount(persal_number, email, hashedPassword);
+    await User.createAccount(persal, email, hashedPassword);
 
     res.json({
       success: true,
@@ -57,8 +60,7 @@ exports.addUser = async (req, res) => {
       generatedPassword,
     });
   } catch (err) {
-    console.error("Error addUser:", err);
-    res.status(500).json({ success: false, error: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -66,8 +68,9 @@ exports.addUser = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-console.log("Finding tha ccount by ID");
+    
     const account = await User.findAccountByEmail(email);
+    
     console.log(account);
     if (!account) {
       console.log("About to stop");
@@ -75,7 +78,7 @@ console.log("Finding tha ccount by ID");
         .status(401)
         .json({ success: false, message: "Invalid email or password" });
     }
-      console.log("About to contitnue 1");
+    console.log("About to contitnue 1");
     // Compare given password with hashed password
     /*const isMatch = await bcrypt.compare(password, account.password);
     if (!isMatch) {
@@ -93,7 +96,7 @@ console.log("Finding tha ccount by ID");
         email: account.email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.json({
@@ -141,9 +144,39 @@ exports.getWorkers = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.getAllUsers();
-    res.json(users);
+
+    res.json({
+      success: true,
+      message: "User fetched successfully",
+      users: users,
+    });
   } catch (err) {
     console.error("❌ Error fetching users:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+};
+
+//update role
+exports.updateRole = async (req, res) => {
+  try {
+    const { persal } = req.params;
+    const { role } = req.body;
+
+    if (!persal || !role) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Persal number and role are required" });
+    }
+
+    const updated = await User.updateRole(persal, role);
+    console.log("Return value",updated);
+
+    res.json({
+      success: true,
+      message: "User role successfuly updated",
+    });
+
+  } catch (err) {
     res.status(500).json({ error: "Database error" });
   }
 };
@@ -151,6 +184,8 @@ exports.getUsers = async (req, res) => {
 // DELETE a user by persal
 exports.deleteUser = async (req, res) => {
   const { persal } = req.params;
+
+  console.log("In the controller");
 
   if (!persal) {
     return res

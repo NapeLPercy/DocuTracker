@@ -1,33 +1,4 @@
-import api from "./api";
-
-//handle api errors
-function handleApiError(error, fallbackMessage) {
-  if (error.response) {
-    return {
-      success: false,
-      message: error.response.data?.message || fallbackMessage,
-      status: error.response.status,
-      data: null,
-    };
-  }
-
-  if (error.request) {
-    return {
-      success: false,
-      message: "No response from server. Please check your connection.",
-      status: null,
-      data: null,
-    };
-  }
-
-  return {
-    success: false,
-    message: error.message || fallbackMessage,
-    status: null,
-    data: null,
-  };
-}
-
+import { api, handleApiError } from "./api";
 //login user
 export async function loginUser(credentials) {
   try {
@@ -44,9 +15,10 @@ export async function loginUser(credentials) {
   }
 }
 
+//add user
 export async function addUser(userData) {
   try {
-    const res = await api.post("/user", userData);
+    const res = await api.post("/auth/user", userData);
 
     return {
       success: true,
@@ -57,4 +29,49 @@ export async function addUser(userData) {
   } catch (error) {
     return handleApiError(error, "Failed to add user");
   }
+}
+
+//get users
+export async function getUsers() {
+  try {
+    const res = await api.get("/auth/users");
+    return res;
+  } catch (error) {
+    return handleApiError(error, "Failed to get users");
+  }
+}
+
+//delete user
+
+export async function deleteUser(persal) {
+  console.log("In the delet user", persal);
+  try {
+    const res = await api.delete(`/auth/user/${persal}`);
+    return res;
+  } catch (error) {
+    return handleApiError(error, "Failed to delete user");
+  }
+}
+
+//edit role
+export async function editRole(persal, data) {
+  try {
+    const res = await api.patch(`/auth/user/${persal}`, data);
+    return res;
+  } catch (error) {
+    return handleApiError(error, "Failed to delete user");
+  }
+}
+
+
+//get workers
+
+export async function getWorkers(role){
+    try{
+      const res = await api.get(`/auth/workers?role=${role}`);
+      return res;
+    }
+    catch(error){
+      return handleApiError(error,"Failed to fetch workers");
+    }
 }

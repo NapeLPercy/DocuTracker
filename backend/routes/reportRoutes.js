@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const reportController = require("../controllers/reportController");
-
-router.get("/", reportController.getUserReports);
+const {requireAuth} = require("../middleware/accessControl");
+router.get("/", requireAuth,reportController.getUserReports);
 
 module.exports = router;

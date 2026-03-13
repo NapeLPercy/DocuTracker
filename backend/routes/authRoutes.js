@@ -7,8 +7,8 @@ router.post('/user', authController.addUser);
 router.post('/login', authController.login);
 
 router.get("/users", authController.getUsers);
-router.delete("/users/:persal", authController.deleteUser);
-
+router.delete("/user/:persal", authController.deleteUser);
+router.patch("/user/:persal", authController.updateRole);
 router.get("/workers", authController.getWorkers);
 
 module.exports = router;

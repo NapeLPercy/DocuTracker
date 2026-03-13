@@ -1,42 +1,37 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
-
 const STORAGE_KEY = "docutracker_user";
 
+function getStoredAuth() {
+  const stored = sessionStorage.getItem(STORAGE_KEY);
+  if (!stored) return { user: null, token: null };
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return { user: null, token: null };
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const storedAuth = getStoredAuth();
 
-  // load user from sessionStorage on refresh
-  useEffect(() => {
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setUser(parsed.user);
-      setToken(parsed.token);
-    }
-  }, []);
+  const [user, setUser] = useState(storedAuth.user);
+  const [token, setToken] = useState(storedAuth.token);
 
-  // login method
   const login = ({ user, token }) => {
     setUser(user);
     setToken(token);
 
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        user,
-        token,
-      })
-    );
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ user, token }));
   };
 
-  // logout method
   const logout = () => {
-    setUser(null);
+    /* setUser(null);
     setToken(null);
-    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(STORAGE_KEY);*/
+    sessionStorage.clear();
   };
 
   const value = {
@@ -47,11 +42,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!token,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

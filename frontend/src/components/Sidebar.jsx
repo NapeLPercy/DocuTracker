@@ -63,7 +63,7 @@ export default function Sidebar({ user, onLogout }) {
         {!collapsed && (
           <div>
             <p style={{ color: "white", fontWeight: 900, fontSize: 15, letterSpacing: "-0.02em", fontFamily: "Georgia, serif", lineHeight: 1 }}>
-              DocFlow
+              DocuTracker
             </p>
             <p style={{ color: "#28a745", fontSize: 9, letterSpacing: "0.14em", marginTop: 2 }}>WORKSPACE</p>
           </div>

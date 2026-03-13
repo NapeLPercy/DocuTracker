@@ -6,14 +6,14 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const id = uuidv4();
       const now = new Date();
-      const startDate = now.toISOString().slice(0, 19).replace("T", " ");
+      //const startDate = now.toISOString().slice(0, 19).replace("T", " ");
       const date = now.toISOString().slice(0, 10);
       const status = "PENDING";
 
       const sql = `
         INSERT INTO task 
-        (id, batch_number, role, assignedTo, start_time, date, persal_number, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (id, batch_number, role, assignedTo, date, persal_number, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
@@ -21,9 +21,9 @@ module.exports = {
         taskData.batchNumber,
         taskData.role,
         taskData.assignedTo,
-        startDate,
+
         date,
-        taskData.persalNumber,
+        taskData.persal_number,
         status,
       ];
 
@@ -42,7 +42,6 @@ module.exports = {
         query = `
           SELECT id, assignedTo, batch_number, date, start_time, finish_time, status
           FROM task
-          WHERE persal_number = ?
           ORDER BY 
             CASE status
               WHEN 'IN_PROGRESS' THEN 1
@@ -107,16 +106,18 @@ module.exports = {
         if (results.length > 0) {
           return reject(
             new Error(
-              "You already have a task in progress. Complete it before starting another."
-            )
+              "You already have a task in progress. Complete it before starting another.",
+            ),
           );
         }
 
-        const sqlTask = "UPDATE task SET status = ?, start_time = ? WHERE id = ?";
+        const sqlTask =
+          "UPDATE task SET status = ?, start_time = ? WHERE id = ?";
         db.query(sqlTask, ["IN_PROGRESS", startDate, taskId], (err2) => {
           if (err2) return reject(err2);
 
-          const sqlUser = "UPDATE user SET is_active = 1 WHERE persal_number = ?";
+          const sqlUser =
+            "UPDATE user SET is_active = 1 WHERE persal_number = ?";
           db.query(sqlUser, [persalNumber], (err3) => {
             if (err3) return reject(err3);
             resolve({ taskId, persalNumber, status: "IN_PROGRESS" });
@@ -131,7 +132,8 @@ module.exports = {
       const now = new Date();
       const endDate = now.toISOString().slice(0, 19).replace("T", " ");
 
-      const sqlTask = "UPDATE task SET status = ?, finish_time = ? WHERE id = ?";
+      const sqlTask =
+        "UPDATE task SET status = ?, finish_time = ? WHERE id = ?";
       db.query(sqlTask, ["COMPLETED", endDate, taskId], (err) => {
         if (err) return reject(err);
 
@@ -144,25 +146,42 @@ module.exports = {
     });
   },
 
+  updateTask: (taskId, status) => {
+    return new Promise((resolve, reject) => {
+      const now = new Date();
+      const endDate = now.toISOString().slice(0, 19).replace("T", " ");
+
+      const sqlTask = "UPDATE task SET status = ? WHERE id = ?";
+      db.query(sqlTask, [status, taskId], (err) => {
+        if (err) return reject(err);
+        resolve({ taskId, status });
+      });
+    });
+  },
+
   reportTask: (taskId, reportData) => {
     return new Promise((resolve, reject) => {
       const reportId = uuidv4();
       const now = new Date();
       const date = now.toISOString().slice(0, 19).replace("T", " ");
 
-      const { type, message, role } = reportData;
+      const { type, details, role } = reportData;
 
-      if (!type || !message) {
+      if (!type || !details) {
         return reject(new Error("Missing fields"));
       }
 
       const query =
         "INSERT INTO report (id, type, details, role, date, task_id) VALUES (?, ?, ?, ?, ?, ?)";
 
-      db.query(query, [reportId, type, message, role, date, taskId], (err, result) => {
-        if (err) return reject(err);
-        resolve({ reportId });
-      });
+      db.query(
+        query,
+        [reportId, type, details, role, date, taskId],
+        (err, result) => {
+          if (err) return reject(err);
+          resolve({ reportId });
+        },
+      );
     });
   },
 };
