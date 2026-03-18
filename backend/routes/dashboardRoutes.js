@@ -13,7 +13,7 @@ const { requireAuth, requireRole } = require("../middleware/accessControl");
 router.get(
   "/personell",
   requireAuth,
-  requireRole(["CREATOR", "ASSEMBLER", "QC", "SCANNER", "TECH-SUPPORT"]),
+  requireRole(["CREATOR","INDEXER", "ASSEMBLER", "QC", "SCANNER", "TECH-SUPPORT"]),
   dashboardController.getPersonellDashboard,
 );
 router.get(
