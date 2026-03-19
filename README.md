@@ -1,126 +1,82 @@
-DocuTracker
+# DocuTracker
+Live demo: https://docutracker.onrender.com 
 
-DocuTracker is a WIL prototype task efficiency and workflow tracking system designed for document digitization environments. 
-Developed as part of my WIL at the DHA Digitization Hub, it improves visibility, accountability, and operational performance by automating task assignment, 
-tracking progress, and providing AI-powered user guidance.
+**Status:** WIL Prototype — DHA Digitization Hub
 
+DocuTracker is a full stack workflow tracking system built for document dha
+digitization environment — task assignment, tracking staff
+performance, and providing **AI-powered guidance** where it matters most.
 
+---
 
-PROBLEM STATEMENT
+## The Problem
 
-During my WIL at the DHA Digitization Hub, I observed that tasks move through multiple stages such as batch creation, indexing, scanning, assembly, and quality checks.
-Errors occurred frequently, and managers relied on verbal interventions to correct mistakes.
+During my WIL at the DHA Digitization Hub, I observed that:
 
-There was no centralized system to track task progress, staff performance, or efficiency metrics, making accountability and operational visibility difficult.
-DocuTracker was designed as a prototype for this specific hub.
+- Tasks move through multiple stages with **no centralized tracking**
+- Errors were corrected through **verbal interventions**, not systems
+- Managers had **no visibility** into staff performance or efficiency
+- Accountability was difficult without structured progress data
 
+---
 
+## The Solution
 
-SOLUTION OVERVIEW
+DocuTracker brings structure to digitization workflows:
 
-DocuTracker addresses these challenges by providing:
+1. Managers input tasks via a simple interface
+2. **n8n automation** assigns tasks based on:
+   - Staff availability
+   - Error rates
+   - Efficiency scores
+3. Staff receive assignments and update progress in real time
+4. Managers get a **live dashboard** with performance insights
+5. An **AI assistant** guides users through the system at every step
 
- -Task CRUD with status updates visible to both managers and assigned staff
- 
- -Automated task assignment via n8n workflows using manager text input
- 
- -Efficiency and performance tracking for each staff member, including error rates, average completion time, and availability
- 
- -AI-powered ChatGPT assistant to help users with guidance and questions
+ Result: **Less manual overhead. More accountability. Smarter workflows.**
 
+---
 
+## Core Features
 
-CORE FEATURES
+-  Task CRUD with real-time status updates
+-  Role-based access for managers and staff
+-  Automated task assignment via n8n workflows
+-  Efficiency & performance tracking (completion time, error rates)
+-  AI assistant (ChatGPT) for workflow guidance and support
+-  Notifications triggered on status changes
 
-Task Management
+---
 
- -Create, update, and track tasks
- 
- -Role-based interaction between managers and staff
- 
- -Live dashboards
- 
- -Status updates trigger notifications to managers
+## Tech Stack
 
-Task Assignment Automation (n8n)
+- **Frontend:** HTML, CSS, JavaScript, Bootstrap
+- **Backend:** Node.js, Express.js
+- **Database:** MySQL
+- **Automation:** n8n, JavaScript & Python scripts
+- **AI / Chatbot:** ChatGPT API
 
- -Assigns tasks automatically based on efficiency, error rates, and availability
- 
- -Reduces manual administrative workload
+---
 
-Efficiency & Performance Tracking
+##  System Architecture
+```
+Manager → Task Input → Task Completion → Efficiency Metrics → Manager Dashboard
+                                              → (Optional) AI Assistant
+```
 
- -Measures task completion time, error rates, and overall efficiency
- 
- -Provides actionable insights for managers
+Decoupled layers for task logic, automation, AI, and performance tracking.
+Modular and extensible by design.
 
-AI Assistance (ChatGPT)
+---
 
- -Guides users through workflows and system navigation
- 
- -Answers task-related questions
- 
- -Optional support layer for staff and managers
+## Status
 
+Prototype built during WIL — demonstrates workflow analysis, task automation,
+and AI integration in a real digitization environment. Not yet in production.
 
+---
 
- TARGET USERS
- 
--Managers overseeing document digitization workflows
+## Author
 
--Staff performing document processing tasks
-
-
-SYSTEM ARCHITECTURE(high level)
-
-Manager
-→ Task Input
-→ n8n Automation
-→ Assigned Staff
-→ Task Completion
-→ Efficiency Metrics
-→ Manager Dashboard
-→ (Optional) ChatGPT Assistant
-
-Decoupled layers for task logic, automation, AI, and performance tracking
-Modular and extensible design
-
-TECH STACK
-
-frontend: html, css, JavaScript, bootstrap
-
-Backend: Express.js, Node.js
-
-Automation: n8n workflows, JavaScript & Python scripts
-
-AI / Chatbot: ChatGPT API
-
-Database: MySql 
-
-
-
-FUTURE IMPROVEMENTS
-
-1 Expand efficiency scoring algorithms for more accurate task assignment
-
-2 Enhance AI assistant with contextual guidance and dynamic suggestions
-
-4 Modularize architecture for multi-hub deployments
-
-5 Add automated unit and integration tests
-
-6 Improve automation rules for adaptive task distribution
-
-PROJECT STATUS
-
--WIL prototype for DHA Digitization Hub
-
--Demonstrates workflow analysis, automation, and AI integration
-
--Not yet deployed in production
-
-
-AUTHOR
-
-Developed by Lekoloane Nape Percy
+Lekoloane Nape Percy
 Computer Science Graduate
