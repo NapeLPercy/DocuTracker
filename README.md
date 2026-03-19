@@ -80,3 +80,4 @@ and AI integration in a real digitization environment. Not yet in production.
 
 Lekoloane Nape Percy
 Computer Science Graduate
+![Screenshot](screenshots/dashboard.png)
