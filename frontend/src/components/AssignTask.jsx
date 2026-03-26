@@ -1,140 +1,30 @@
-// pages/AddTask.jsx
-// Reuses Input and PrimaryBtn from your existing components.
-// When a role is selected, fetchWorkersByRole() is called — swap the
-// hardcoded mock inside that function with your real API call later.
-
 import { useState } from "react";
 import { ClipboardList, Hash, ShieldCheck, Users } from "lucide-react";
 import Input from "./ui/Input";
+import SelectField from "./ui/SelectField";
 import PrimaryBtn from "./ui/PrimaryBtn";
 import { getWorkers } from "../services/authService";
 import { addTask } from "../services/taskService";
-
-const ROLES = [
-  { value: "INDEXER", label: "Indexer" },
-  { value: "CREATOR", label: "Batch Creator" },
-  { value: "ASSEMBLER", label: "Assembler" },
-  { value: "QC", label: "QC" },
-  { value: "SCANNER", label: "Scanner" },
-  { value: "RUNNER", label: "Runner" },
-  { value: "tech-support", label: "Technical Support" },
-];
+import { addNotification } from "../services/notificationsService";
+import { rolesData } from "../../utils/rolesData";
+import { getAllBatch } from "../services/batchService";
 
 const EMPTY = { role: "", batchNumber: "", workerId: "" };
 
-// ── Shared select style helper ────────────────────────────────────────────────
-function SelectField({
-  label,
-  icon,
-  value,
-  onChange,
-  onFocus,
-  onBlur,
-  error,
-  disabled,
-  children,
-}) {
-  return (
-    <div className="mb-4">
-      {label && (
-        <label
-          className="block text-xs font-semibold uppercase mb-1.5"
-          style={{ color: "#6c757d", letterSpacing: "0.1em" }}
-        >
-          {label}
-        </label>
-      )}
-      <div className="relative flex items-center">
-        {icon && (
-          <div
-            className="absolute left-3.5 pointer-events-none"
-            style={{ color: "#6c757d" }}
-          >
-            {icon}
-          </div>
-        )}
-        <select
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          style={{
-            width: "100%",
-            paddingLeft: "2.75rem",
-            paddingRight: "2rem",
-            paddingTop: "0.75rem",
-            paddingBottom: "0.75rem",
-            background: disabled
-              ? "rgba(255,255,255,0.02)"
-              : "rgba(255,255,255,0.04)",
-            border: error
-              ? "1px solid #dc3545"
-              : "1px solid rgba(255,255,255,0.1)",
-            borderRadius: 12,
-            color: value ? "#f1f5f9" : "#6c757d",
-            fontSize: 14,
-            outline: "none",
-            appearance: "none",
-            cursor: disabled ? "not-allowed" : "pointer",
-            opacity: disabled ? 0.5 : 1,
-            transition: "border 0.2s, box-shadow 0.2s",
-          }}
-          onFocus={(e) => {
-            if (!disabled) {
-              e.target.style.border = "1px solid #28a745";
-              e.target.style.boxShadow = "0 0 0 3px rgba(40,167,69,0.15)";
-            }
-            onFocus?.();
-          }}
-          onBlur={(e) => {
-            e.target.style.border = error
-              ? "1px solid #dc3545"
-              : "1px solid rgba(255,255,255,0.1)";
-            e.target.style.boxShadow = "none";
-            onBlur?.();
-          }}
-        >
-          {children}
-        </select>
-
-        {/* Chevron */}
-        <div
-          className="absolute right-3 pointer-events-none"
-          style={{ color: "#6c757d" }}
-        >
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </div>
-      </div>
-      {error && (
-        <p className="text-xs mt-1.5" style={{ color: "#dc3545" }}>
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 export default function AssignTask() {
   const [form, setForm] = useState(EMPTY);
   const [workers, setWorkers] = useState([]); // populated after role fetch
+  const [batches, setBatches] = useState([]); //polulated afte batch fetch
   const [fetching, setFetching] = useState(false);
+  const [fetchingBatches, setFetchingBatches] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // ── Role change → fetch workers ──────────────────────────────────────────
+  // Role change → fetch workers
   const handleRoleChange = async (e) => {
     const role = e.target.value;
-    setForm({ ...EMPTY, role }); // reset batch + worker when role changes
+    setForm({ ...form, role, workerId: "" }); // reset batch + worker when role changes
     setWorkers([]);
     setErrors({});
     setSuccess(false);
@@ -157,14 +47,50 @@ export default function AssignTask() {
     }
   };
 
-  // ── Field helpers ─────────────────────────────────────────────────────────
+  //when user selects a batch
+  const handleBatchChange = async (e) => {
+    const batchNumber = e.target.value;
+    setForm({ ...form, batchNumber });
+  };
+
+  const fetchPendingBatches = async () => {
+    setFetchingBatches(true);
+    try {
+      /*const { data } = await getAllBatch("PENDING");
+      if (!data.success) {
+        return;
+      }*/
+      setTimeout(() => {
+        const x = [
+          { batchNumber: 234567, addedOn: "12/03/2026" },
+          { addedOn: "21/08/2026", batchNumber: 876543 },
+        ];
+
+        setBatches(x);
+        setFetchingBatches(false);
+      }, 10000);
+      console.log("here is the data", data);
+      //setWorkers(data.workers);
+    } catch (err) {
+      console.error("Failed to fetch document batches:", err);
+      setBatches([]);
+    } finally {
+      //setFetchingBatches(false);
+    }
+  };
+
+  useState(() => {
+    fetchPendingBatches();
+  }, []);
+
+  // Field helpers
   const set = (field) => (e) => {
     setForm((p) => ({ ...p, [field]: e.target.value }));
     setErrors((p) => ({ ...p, [field]: "" }));
     setSuccess(false);
   };
 
-  // ── Validation ────────────────────────────────────────────────────────────
+  // Validation
   const validate = () => {
     const e = {};
     if (!form.role) e.role = "Please select a role";
@@ -173,7 +99,7 @@ export default function AssignTask() {
     return e;
   };
 
-  // ── Submit ────────────────────────────────────────────────────────────────
+  // Submit
   const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length) {
@@ -184,21 +110,30 @@ export default function AssignTask() {
     setLoading(true);
 
     //
-    let assignedTo = workers.find(w=>{
+    let assignedTo = workers.find((w) => {
       return w.persal_number === form.persal_number;
     });
 
-    console.log("This is the chosen worker",assignedTo);
     form.assignedTo = assignedTo.fullName;
-    console.log("With name",assignedTo); 
-   try {
-      const data = await addTask(form);
+
+    try {
+      const { data } = await addTask(form);
+
       if (!data.success) {
         return;
       }
+
       const worker = workers.find(
         (w) => String(w.persal_number) === String(form.persal_number),
       );
+
+      //add notification after successful task creation
+      const res = await addNotification(
+        "You have a new task assignment",
+        form.persal_number,
+      );
+
+      console.log(res,"after adding a notification");
     } catch (error) {
     } finally {
       setTimeout(() => {
@@ -233,7 +168,7 @@ export default function AssignTask() {
         />
       </div>
 
-      {/* ── Form card ── */}
+      {/* Form card */}
       <div
         style={{
           background: "rgba(255,255,255,0.03)",
@@ -255,7 +190,7 @@ export default function AssignTask() {
           <option value="" style={{ background: "#0a1628" }}>
             -- Select a Role --
           </option>
-          {ROLES.map((r) => (
+          {rolesData.map((r) => (
             <option
               key={r.value}
               value={r.value}
@@ -266,18 +201,63 @@ export default function AssignTask() {
           ))}
         </SelectField>
 
-        {/* Batch number */}
-        <Input
+        {/* Batch Number */}
+        <SelectField
           label="Batch Number"
-          type="text"
-          placeholder="e.g. BATCH-20240312"
+          icon={
+            fetchingBatches ? (
+              <svg
+                className="animate-spin"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="rgba(255,255,255,0.2)"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M12 2a10 10 0 0 1 10 10"
+                  stroke="#28a745"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            ) : (
+              <Hash size={16} />
+            )
+          }
           value={form.batchNumber}
-          onChange={set("batchNumber")}
-          icon={<Hash size={16} />}
+          onChange={handleBatchChange}
           error={errors.batchNumber}
-        />
+        >
+          <option value="" style={{ background: "#0a1628" }}>
+            {
+              /*!form.batchNumber
+              ? "-- Select a document Batch first --"
+              :*/ fetchingBatches
+                ? "Loading document batches…"
+                : batches.length === 0
+                  ? "No document batches found"
+                  : "-- Select a document Batch --"
+            }
+          </option>
+          {batches.map((r, i) => (
+            <option
+              key={r.batchNumber}
+              value={r.batchNumber}
+              style={{ background: "#0a1628", color: "#f1f5f9" }}
+            >
+              {r.batchNumber + "  " + r.addedOn}
+            </option>
+          ))}
+        </SelectField>
 
-        {/* Workers — shown after role selected */}
+        {/* Workers - shown after role selected */}
         <div style={{ position: "relative" }}>
           <SelectField
             label="Assign Worker"

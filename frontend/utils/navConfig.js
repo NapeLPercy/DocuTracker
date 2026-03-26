@@ -27,6 +27,21 @@ export const MANAGER_NAV = [
     ],
   },
   {
+    section: "Batches",
+    items: [
+      {
+        label: "Add batch",
+        path: "manager/batch/add",
+        icon: "UserPlus",
+      },
+      {
+        label: "View batches",
+        path: "manager/batches",
+        icon: "Users",
+      },
+    ],
+  },
+  {
     section: "Tasks",
     items: [
       {

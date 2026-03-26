@@ -5,10 +5,11 @@ export const rolesData = [
   { value: "QC", label: "QC" },
   { value: "SCANNER", label: "Scanner" },
   { value: "RUNNER", label: "Runner" },
+  { value: "TEAM-LEADER", label: "Team Leader" },
   { value: "TECH-SUPPORT", label: "Technical Support" },
 ];
 
-// ── Role badge colours ───────────────────────────────────────────────────────
+// Role badge colours 
 export const roleMeta = {
   INDEXER: { label: "Indexer", color: "#17a2b8", bg: "rgba(23,162,184,0.12)" },
   CREATOR: {
@@ -30,4 +31,3 @@ export const roleMeta = {
     bg: "rgba(220,53,69,0.12)",
   },
 };
-

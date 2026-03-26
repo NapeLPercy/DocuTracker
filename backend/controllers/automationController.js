@@ -89,3 +89,44 @@ export const getBest = async (req, res) => {
     });
   }
 };
+
+
+/*app.post("/api/automation/start", async (req, res) => {
+  try {
+    console.log("Request body", req.body);
+
+    const payload = {
+      batch_number: req.body.batch_number,
+      message: req.body.message,
+      triggeredBy: "MANAGER",
+    };
+
+    console.log("In the payload", payload);
+
+    const n8nRes = await fetch(
+      "https://coursematch-work.app.n8n.cloud/webhook/assign-task",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const text = await n8nRes.text();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { raw: text };
+    }
+
+    return res.status(n8nRes.status).json(data);
+  } catch (error) {
+    console.error("Automation trigger failed:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to start automation",
+    });
+  }
+}); */

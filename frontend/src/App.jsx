@@ -14,6 +14,8 @@ import PersonellDashboard from "./components/PersonellDashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import Metrics from "./components/Metrics";
 import Home from "./components/Home";
+import AddBatch from "./components/AddBatch";
+
 import RequireAuth from "./components/RequireAuth";
 import RequireRole from "./components/RequireRole";
 
@@ -47,6 +49,7 @@ export default function App() {
               <Route path="manager/tasks" element={<ViewAllTasks />} />
               <Route path="manager/dashboard" element={<AdminDashboard />} />
               <Route path="manager/metrics" element={<Metrics />} />
+              <Route path="manager/batch/add" element={<AddBatch/>}/>
             </Route>
 
             {/* personell only */}

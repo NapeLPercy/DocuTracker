@@ -1,37 +1,14 @@
-// components/Navbar.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Bell, Search, ChevronRight, X, Check } from "lucide-react";
-
-// Static mock notifications — replace with real API data
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 1,
-    text: "Document #1042 approved by manager",
-    time: "2m ago",
-    read: false,
-  },
-  {
-    id: 2,
-    text: "New task assigned: Q2 Report Review",
-    time: "18m ago",
-    read: false,
-  },
-  {
-    id: 3,
-    text: "Team meeting scheduled for 3:00 PM",
-    time: "1h ago",
-    read: true,
-  },
-  {
-    id: 4,
-    text: "Upload deadline reminder: EOD today",
-    time: "2h ago",
-    read: true,
-  },
-];
-
-// Build a readable breadcrumb from the current path
+import { Bell, Search, ChevronRight, X, Check, Drama } from "lucide-react";
+import {
+  getNotifications,
+  updateNotifications,
+  updateNotification,
+} from "../services/notificationsService";
+import { formatTime } from "../../utils/dateTimeFormat";
+import SmallLoader from "./ui/SmallLoader";
+// Readable breadcrumb from the current path
 function useBreadcrumb() {
   const { pathname } = useLocation();
   const parts = pathname.replace(/^\//, "").split("/").filter(Boolean);
@@ -41,16 +18,72 @@ function useBreadcrumb() {
 export default function Navbar({ user }) {
   const breadcrumb = useBreadcrumb();
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
   const [searchVal, setSearchVal] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const unread = notifications.filter((n) => !n.read).length;
 
-  const markAllRead = () =>
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  useEffect(() => {
+    fetchNotification();
+  }, []);
 
-  const dismiss = (id) =>
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  //fetch all notifcations
+  const fetchNotification = async () => {
+    setLoading(true);
+    try {
+      const { data } = await getNotifications();
+      if (!data.success) {
+        alert("error");
+        return;
+      }
+
+      setNotifications(data.notifications);
+    } catch (error) {
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  const updateAllNotifications = async () => {
+    try {
+      const { data } = await updateNotifications();
+      if (!data.success) {
+        console.error("error occurred");
+        return;
+      }
+
+      /* update state immutably
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));*/
+      setNotifications([]);
+    } catch (error) {
+      alert("error");
+    }
+  };
+
+  const updateOneNotification = async (id) => {
+    try {
+      const { data } = await updateNotification(id);
+      if (!data.success) {
+        console.error("error occurred");
+        return;
+      }
+
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (error) {
+      alert("error");
+    }
+  };
+
+  //update all notifications to is_read=1/true
+  const markAllRead = () => {
+    updateAllNotifications();
+  };
+
+  //update a notification to is_read=1/true
+  const markOneRead = (id) => {
+    updateOneNotification(id);
+  };
 
   return (
     <header
@@ -68,7 +101,7 @@ export default function Navbar({ user }) {
         zIndex: 30,
       }}
     >
-      {/* ── Breadcrumb ── */}
+      {/* Breadcrumb  */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
         {breadcrumb.map((crumb, i) => (
           <span
@@ -225,7 +258,9 @@ export default function Navbar({ user }) {
               )}
             </div>
             <div style={{ maxHeight: 280, overflowY: "auto" }}>
-              {notifications.length === 0 ? (
+              {loading ? (
+                <SmallLoader />
+              ) : notifications.length === 0 ? (
                 <p
                   style={{
                     color: "#6c757d",
@@ -276,11 +311,11 @@ export default function Navbar({ user }) {
                       <p
                         style={{ color: "#6c757d", fontSize: 10, marginTop: 2 }}
                       >
-                        {n.time}
+                        {formatTime(n.time)}
                       </p>
                     </div>
                     <button
-                      onClick={() => dismiss(n.id)}
+                      onClick={() => markOneRead(n.id)}
                       style={{
                         background: "none",
                         border: "none",

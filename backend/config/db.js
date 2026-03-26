@@ -1,5 +1,5 @@
 
-/*AVIEN CONNECTION*/
+/*AVIEN CONNECTION
 const mysql = require("mysql2");
 const fs = require("fs");
 const path = require("path");
@@ -33,9 +33,9 @@ db.getConnection((err, conn) => {
   }
 });
 
-module.exports = db;
+module.exports = db;*/
 
-/*nromal connection db.js
+//nromal connection db.js
 const mysql = require('mysql2');
 require('dotenv').config();
 
@@ -54,5 +54,5 @@ connection.connect(err => {
   console.log('Connected to MySQL');
 });
 
-module.exports = connection;*/
+module.exports = connection;
 
