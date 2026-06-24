@@ -18,7 +18,7 @@ import AddBatch from "./components/AddBatch";
 
 import RequireAuth from "./components/RequireAuth";
 import RequireRole from "./components/RequireRole";
-
+import Chatbot from "./pages/Chatbot";
 export default function App() {
   const { user } = useAuth();
 
@@ -49,7 +49,7 @@ export default function App() {
               <Route path="manager/tasks" element={<ViewAllTasks />} />
               <Route path="manager/dashboard" element={<AdminDashboard />} />
               <Route path="manager/metrics" element={<Metrics />} />
-              <Route path="manager/batch/add" element={<AddBatch/>}/>
+              <Route path="manager/batch/add" element={<AddBatch />} />
             </Route>
 
             {/* personell only */}
@@ -74,6 +74,7 @@ export default function App() {
                 element={<PersonellDashboard />}
               />
               <Route path="personell/metrics" element={<Metrics />} />
+              <Route path="personell/chatbot" element={<Chatbot />} />
             </Route>
           </Route>
         </Route>

@@ -1,18 +1,17 @@
+require("dotenv").config();
+
 const {
   ragService,
   documentIndexingService,
 } = require("../service/rag/ragFactory");
 
-exports.chat = async (req, res) => {
-  const { question } = req.body;
+async function main() {
+    
   await documentIndexingService.indexDocuments();
-  
-  const answer = await ragService.chat(question);
+  const answer = await ragService.chat("What is the purpose of Indexing QC?");
 
   console.log("\nANSWER:\n");
   console.log(answer);
+}
 
-  res.json({
-    answer,
-  });
-};
+main();
