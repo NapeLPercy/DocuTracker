@@ -30,9 +30,29 @@ app.use("/api/automate", autoRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/batches", batchRoutes);
+const {
+  documentIndexingService,
+} = require("../backend/service/rag/ragFactory");
+
+async function bootstrap() {
+  try {
+    console.log("Indexing documents...");
+
+    await documentIndexingService.indexDocuments();
+
+    console.log("Documents indexed successfully");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Startup failed:", error);
+    process.exit(1);
+  }
+}
+
+bootstrap();
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
-

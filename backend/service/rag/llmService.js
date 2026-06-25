@@ -12,10 +12,6 @@ class LLMService {
 
   async generateAnswer(question, documents) {
     const context = documents.map((doc) => doc.pageContent).join("\n\n");
-
-    console.log("here is the context", context);
-    console.log("the question", question);
-    
     const prompt = `${systemPrompt}
 
 Context:
