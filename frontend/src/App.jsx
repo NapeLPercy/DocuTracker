@@ -18,7 +18,8 @@ import AddBatch from "./components/AddBatch";
 
 import RequireAuth from "./components/RequireAuth";
 import RequireRole from "./components/RequireRole";
-import Chatbot from "./pages/Chatbot";
+import Chatbot from "./ragChatbot/Chatbot";
+
 export default function App() {
   const { user } = useAuth();
 
@@ -50,6 +51,8 @@ export default function App() {
               <Route path="manager/dashboard" element={<AdminDashboard />} />
               <Route path="manager/metrics" element={<Metrics />} />
               <Route path="manager/batch/add" element={<AddBatch />} />
+              
+              <Route path="manager/chatbot" element={<Chatbot />} />
             </Route>
 
             {/* personell only */}

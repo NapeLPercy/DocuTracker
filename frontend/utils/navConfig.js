@@ -66,6 +66,16 @@ export const MANAGER_NAV = [
       },
     ],
   },
+   {
+    section: "AI Tools",
+    items: [
+      {
+        label: "DocuBot",
+        path: "manager/chatbot",
+        icon: "Bot",
+      },
+    ],
+  },
   {
     section: "Insights",
     items: [
@@ -111,6 +121,17 @@ export const WORKER_NAV = [
         label: "Tasks",
         path: "personell/tasks",
         icon: "ClipboardList",
+      },
+    ],
+  },
+
+  {
+    section: "AI Tools",
+    items: [
+      {
+        label: "DocuBot",
+        path: "personell/chatbot",
+        icon: "Bot",
       },
     ],
   },

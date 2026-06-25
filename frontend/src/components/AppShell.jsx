@@ -1,7 +1,3 @@
-// AppShell.jsx
-// Drop this as the layout wrapper in your router.
-// It reads `user` from your AuthContext — wire up useAuth() to match your actual hook name.
-
 import { useContext } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // ← adjust path to your AuthContext

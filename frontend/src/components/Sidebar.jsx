@@ -1,4 +1,3 @@
-// components/Sidebar.jsx
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -19,6 +18,7 @@ import {
   UserPlus,
   ClipboardPlus,
   MessageSquareText,
+  Bot,
 } from "lucide-react";
 
 import { getNavByRole } from "../../utils/navConfig";
@@ -37,6 +37,7 @@ const ICONS = {
   Settings2,
   FileText,
   Upload,
+  Bot
 };
 
 const DocFlowLogo = () => (

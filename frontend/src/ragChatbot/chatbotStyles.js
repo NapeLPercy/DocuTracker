@@ -1,4 +1,3 @@
-// components/chatbot/chatbotStyles.js
 
 const styles = {
   // ── Shell ────────────────────────────────────────────────────────────────
